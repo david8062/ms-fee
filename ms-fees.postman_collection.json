@@ -1,0 +1,412 @@
+{
+  "info": {
+    "_postman_id": "ms-fees-collection-v1",
+    "name": "IusCloud – ms-fees",
+    "description": "Honorarios, pagos, registro de tiempo y gastos — ms-fees v1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl",  "value": "http://localhost:8085/ms-fees", "type": "string" },
+    { "key": "token",    "value": "",                              "type": "string" },
+    { "key": "tenantId", "value": "",                              "type": "string" },
+    { "key": "serviceId","value": "",                              "type": "string" },
+    { "key": "feeId",    "value": "",                              "type": "string" },
+    { "key": "paymentId","value": "",                              "type": "string" },
+    { "key": "entryId",  "value": "",                              "type": "string" },
+    { "key": "expenseId","value": "",                              "type": "string" },
+    { "key": "clientId", "value": "",                              "type": "string" },
+    { "key": "caseId",   "value": "",                              "type": "string" },
+    { "key": "userId",   "value": "",                              "type": "string" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Services",
+      "item": [
+        {
+          "name": "Crear servicio",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/services", "host": ["{{baseUrl}}"], "path": ["api","v1","services"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Consulta Jurídica\",\n  \"slug\": \"consulta-juridica\",\n  \"shortDescription\": \"Consulta inicial de 1 hora\",\n  \"fullDescription\": \"Asesoría jurídica presencial o virtual de 60 minutos.\",\n  \"category\": \"CIVIL\",\n  \"pricingStrategy\": \"FIXED\",\n  \"baseAmount\": 150000,\n  \"currency\": \"COP\",\n  \"durationMinutes\": 60,\n  \"isFree\": false,\n  \"isPublic\": true\n}"
+            }
+          },
+          "event": [{
+            "listen": "test",
+            "script": { "exec": ["var r = pm.response.json(); if(r.data && r.data.id) pm.collectionVariables.set('serviceId', r.data.id);"], "type": "text/javascript" }
+          }]
+        },
+        {
+          "name": "Listar servicios",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/v1/services?page=0&size=20", "host": ["{{baseUrl}}"], "path": ["api","v1","services"], "query": [{"key":"page","value":"0"},{"key":"size","value":"20"},{"key":"isPublic","value":"","disabled":true}] }
+          }
+        },
+        {
+          "name": "Obtener servicio por ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/v1/services/{{serviceId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","services","{{serviceId}}"] }
+          }
+        },
+        {
+          "name": "Actualizar servicio",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/services/{{serviceId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","services","{{serviceId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Consulta Jurídica Premium\",\n  \"slug\": \"consulta-juridica-premium\",\n  \"shortDescription\": \"Consulta extendida de 90 minutos\",\n  \"fullDescription\": \"Asesoría jurídica con análisis de documentos incluido.\",\n  \"category\": \"CIVIL\",\n  \"pricingStrategy\": \"FIXED\",\n  \"baseAmount\": 250000,\n  \"currency\": \"COP\",\n  \"durationMinutes\": 90,\n  \"isFree\": false,\n  \"isPublic\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar servicio",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/v1/services/{{serviceId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","services","{{serviceId}}"] }
+          }
+        },
+        {
+          "name": "Crear servicio – CONTINGENCIA",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/services", "host": ["{{baseUrl}}"], "path": ["api","v1","services"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cobro Prejurídico\",\n  \"slug\": \"cobro-prejudicial\",\n  \"shortDescription\": \"Gestión de cobro extrajudicial\",\n  \"category\": \"COMMERCIAL\",\n  \"pricingStrategy\": \"CONTINGENCY\",\n  \"percentageAmount\": 20,\n  \"currency\": \"COP\",\n  \"isFree\": false,\n  \"isPublic\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "Crear servicio – MIXTO",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/services", "host": ["{{baseUrl}}"], "path": ["api","v1","services"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Proceso de Sucesión\",\n  \"slug\": \"proceso-sucesion\",\n  \"shortDescription\": \"Trámite sucesoral completo\",\n  \"category\": \"FAMILY\",\n  \"pricingStrategy\": \"MIXED\",\n  \"baseAmount\": 3000000,\n  \"percentageAmount\": 5,\n  \"currency\": \"COP\",\n  \"isFree\": false,\n  \"isPublic\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Crear servicio – GRATUITO",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/services", "host": ["{{baseUrl}}"], "path": ["api","v1","services"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Consulta Gratuita\",\n  \"slug\": \"consulta-gratuita\",\n  \"shortDescription\": \"Primera consulta sin costo\",\n  \"category\": \"OTHER\",\n  \"pricingStrategy\": \"FREE\",\n  \"baseAmount\": 0,\n  \"isFree\": true,\n  \"isPublic\": true,\n  \"durationMinutes\": 30\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fees",
+      "item": [
+        {
+          "name": "Crear honorario – FIXED",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/fees", "host": ["{{baseUrl}}"], "path": ["api","v1","fees"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientId\": \"{{clientId}}\",\n  \"caseId\": \"{{caseId}}\",\n  \"serviceId\": \"{{serviceId}}\",\n  \"assignedUserId\": \"{{userId}}\",\n  \"description\": \"Honorarios proceso ejecutivo\",\n  \"feeType\": \"FIXED\",\n  \"agreedAmount\": 5000000,\n  \"currency\": \"COP\",\n  \"dueDate\": \"2026-08-31\",\n  \"notes\": \"Incluye primera instancia\"\n}"
+            }
+          },
+          "event": [{
+            "listen": "test",
+            "script": { "exec": ["var r = pm.response.json(); if(r.data && r.data.id) pm.collectionVariables.set('feeId', r.data.id);"], "type": "text/javascript" }
+          }]
+        },
+        {
+          "name": "Crear honorario – HOURLY",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/fees", "host": ["{{baseUrl}}"], "path": ["api","v1","fees"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientId\": \"{{clientId}}\",\n  \"assignedUserId\": \"{{userId}}\",\n  \"description\": \"Asesoría por horas\",\n  \"feeType\": \"HOURLY\",\n  \"agreedAmount\": 1200000,\n  \"currency\": \"COP\",\n  \"dueDate\": \"2026-09-30\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Crear honorario – CONTINGENCY",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/fees", "host": ["{{baseUrl}}"], "path": ["api","v1","fees"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientId\": \"{{clientId}}\",\n  \"caseId\": \"{{caseId}}\",\n  \"assignedUserId\": \"{{userId}}\",\n  \"description\": \"Honorario de éxito 20% sobre lo recuperado\",\n  \"feeType\": \"CONTINGENCY\",\n  \"agreedAmount\": 8000000,\n  \"currency\": \"COP\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Crear honorario – RETAINER",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/fees", "host": ["{{baseUrl}}"], "path": ["api","v1","fees"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientId\": \"{{clientId}}\",\n  \"assignedUserId\": \"{{userId}}\",\n  \"description\": \"Retención mensual\",\n  \"feeType\": \"RETAINER\",\n  \"agreedAmount\": 2000000,\n  \"currency\": \"COP\",\n  \"dueDate\": \"2026-07-31\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar honorarios",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/fees?page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","v1","fees"],
+              "query": [
+                {"key":"page","value":"0"},
+                {"key":"size","value":"10"},
+                {"key":"clientId","value":"","disabled":true},
+                {"key":"caseId","value":"","disabled":true},
+                {"key":"assignedUserId","value":"","disabled":true}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener honorario por ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/v1/fees/{{feeId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","fees","{{feeId}}"] }
+          }
+        },
+        {
+          "name": "Actualizar honorario",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/fees/{{feeId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","fees","{{feeId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientId\": \"{{clientId}}\",\n  \"assignedUserId\": \"{{userId}}\",\n  \"description\": \"Honorarios proceso ejecutivo (actualizado)\",\n  \"feeType\": \"FIXED\",\n  \"agreedAmount\": 6000000,\n  \"currency\": \"COP\",\n  \"dueDate\": \"2026-09-30\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar honorario",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/v1/fees/{{feeId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","fees","{{feeId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Registrar pago",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/fees/{{feeId}}/payments", "host": ["{{baseUrl}}"], "path": ["api","v1","fees","{{feeId}}","payments"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 2500000,\n  \"paymentDate\": \"2026-06-12\",\n  \"paymentMethod\": \"TRANSFER\",\n  \"reference\": \"TRX-2026-001\",\n  \"notes\": \"Primer abono\"\n}"
+            }
+          },
+          "event": [{
+            "listen": "test",
+            "script": { "exec": ["var r = pm.response.json(); if(r.data && r.data.id) pm.collectionVariables.set('paymentId', r.data.id);"], "type": "text/javascript" }
+          }]
+        },
+        {
+          "name": "Registrar pago – CASH",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/fees/{{feeId}}/payments", "host": ["{{baseUrl}}"], "path": ["api","v1","fees","{{feeId}}","payments"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 1000000,\n  \"paymentDate\": \"2026-06-15\",\n  \"paymentMethod\": \"CASH\",\n  \"notes\": \"Pago en efectivo\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar pagos del honorario",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/v1/fees/{{feeId}}/payments", "host": ["{{baseUrl}}"], "path": ["api","v1","fees","{{feeId}}","payments"] }
+          }
+        },
+        {
+          "name": "Eliminar pago",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/v1/fees/{{feeId}}/payments/{{paymentId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","fees","{{feeId}}","payments","{{paymentId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Time Entries",
+      "item": [
+        {
+          "name": "Registrar tiempo",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/fees/{{feeId}}/time-entries", "host": ["{{baseUrl}}"], "path": ["api","v1","fees","{{feeId}}","time-entries"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"description\": \"Revisión de documentos y redacción de demanda\",\n  \"hours\": 3,\n  \"minutes\": 30,\n  \"workDate\": \"2026-06-12\"\n}"
+            }
+          },
+          "event": [{
+            "listen": "test",
+            "script": { "exec": ["var r = pm.response.json(); if(r.data && r.data.id) pm.collectionVariables.set('entryId', r.data.id);"], "type": "text/javascript" }
+          }]
+        },
+        {
+          "name": "Listar entradas de tiempo",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/v1/fees/{{feeId}}/time-entries", "host": ["{{baseUrl}}"], "path": ["api","v1","fees","{{feeId}}","time-entries"] }
+          }
+        },
+        {
+          "name": "Eliminar entrada de tiempo",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/v1/fees/{{feeId}}/time-entries/{{entryId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","fees","{{feeId}}","time-entries","{{entryId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Expenses",
+      "item": [
+        {
+          "name": "Registrar gasto – TRANSPORT",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/expenses", "host": ["{{baseUrl}}"], "path": ["api","v1","expenses"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"caseId\": \"{{caseId}}\",\n  \"description\": \"Transporte al juzgado – audiencia inicial\",\n  \"amount\": 45000,\n  \"expenseDate\": \"2026-06-12\",\n  \"reimbursable\": true,\n  \"category\": \"TRANSPORT\"\n}"
+            }
+          },
+          "event": [{
+            "listen": "test",
+            "script": { "exec": ["var r = pm.response.json(); if(r.data && r.data.id) pm.collectionVariables.set('expenseId', r.data.id);"], "type": "text/javascript" }
+          }]
+        },
+        {
+          "name": "Registrar gasto – NOTARIAL",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/expenses", "host": ["{{baseUrl}}"], "path": ["api","v1","expenses"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"caseId\": \"{{caseId}}\",\n  \"description\": \"Autenticación poder especial – Notaría 12\",\n  \"amount\": 28000,\n  \"expenseDate\": \"2026-06-10\",\n  \"reimbursable\": true,\n  \"category\": \"NOTARIAL\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Registrar gasto – COURT_FEES",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/expenses", "host": ["{{baseUrl}}"], "path": ["api","v1","expenses"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"caseId\": \"{{caseId}}\",\n  \"description\": \"Arancel judicial presentación demanda\",\n  \"amount\": 135000,\n  \"expenseDate\": \"2026-06-05\",\n  \"reimbursable\": false,\n  \"category\": \"COURT_FEES\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Registrar gasto – COPIES",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/expenses", "host": ["{{baseUrl}}"], "path": ["api","v1","expenses"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Fotocopias expediente\",\n  \"amount\": 12000,\n  \"expenseDate\": \"2026-06-11\",\n  \"reimbursable\": true,\n  \"category\": \"COPIES\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar gastos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/expenses?page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","v1","expenses"],
+              "query": [
+                {"key":"page","value":"0"},
+                {"key":"size","value":"20"},
+                {"key":"caseId","value":"","disabled":true}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener gasto por ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/v1/expenses/{{expenseId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","expenses","{{expenseId}}"] }
+          }
+        },
+        {
+          "name": "Actualizar gasto",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/expenses/{{expenseId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","expenses","{{expenseId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"caseId\": \"{{caseId}}\",\n  \"description\": \"Transporte al juzgado (corregido)\",\n  \"amount\": 50000,\n  \"expenseDate\": \"2026-06-12\",\n  \"reimbursable\": true,\n  \"category\": \"TRANSPORT\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar gasto",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/v1/expenses/{{expenseId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","expenses","{{expenseId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "noauth" },
+            "url": { "raw": "{{baseUrl}}/actuator/health", "host": ["{{baseUrl}}"], "path": ["actuator","health"] }
+          }
+        }
+      ]
+    }
+  ]
+}
