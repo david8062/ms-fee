@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -19,6 +20,7 @@ public class GetAllFeesUseCase implements GetAllFeesPort {
     private final FeeMapper feeMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public Page<FeeResponseDTO> execute(UUID tenantId, UUID clientId, UUID caseId, UUID assignedUserId, Pageable pageable) {
         return feeRepository.findAll(tenantId, clientId, caseId, assignedUserId, pageable)
                 .map(feeMapper::toResponse);

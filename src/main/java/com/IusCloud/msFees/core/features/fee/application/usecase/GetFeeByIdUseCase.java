@@ -7,6 +7,7 @@ import com.IusCloud.msFees.core.features.fee.domain.port.out.FeeRepository;
 import com.IusCloud.msFees.shared.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -18,6 +19,7 @@ public class GetFeeByIdUseCase implements GetFeeByIdPort {
     private final FeeMapper feeMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public FeeResponseDTO execute(UUID id, UUID tenantId) {
         return feeRepository.findById(id, tenantId)
                 .map(feeMapper::toResponse)
