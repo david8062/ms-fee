@@ -12,3 +12,4 @@ public class MsFeesApplication {
         SpringApplication.run(MsFeesApplication.class, args);
     }
 }
+
