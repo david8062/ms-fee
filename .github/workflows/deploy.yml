@@ -45,6 +45,7 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             set -e
+            docker rm -f iuscloud-ms-fees 2>/dev/null || true
             cd /home/back
             docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --build ms_fees
 
