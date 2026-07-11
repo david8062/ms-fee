@@ -1,6 +1,7 @@
 package com.IusCloud.msFees.config.security;
 
 import com.IusCloud.msFees.config.TenantFilter;
+import com.IusCloud.msFees.config.TrialRestrictionFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -18,13 +19,16 @@ import java.util.List;
 public class WebSecurityConfig {
 
     private final TenantFilter tenantFilter;
+    private final TrialRestrictionFilter trialRestrictionFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     public WebSecurityConfig(TenantFilter tenantFilter,
+                             TrialRestrictionFilter trialRestrictionFilter,
                              JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
                              CustomAccessDeniedHandler customAccessDeniedHandler) {
         this.tenantFilter = tenantFilter;
+        this.trialRestrictionFilter = trialRestrictionFilter;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.customAccessDeniedHandler = customAccessDeniedHandler;
     }
@@ -43,6 +47,7 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(tenantFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(trialRestrictionFilter, TenantFilter.class)
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable());
 
