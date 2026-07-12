@@ -66,17 +66,21 @@ public class TrialRestrictionFilter extends OncePerRequestFilter {
 
         String status;
         Instant trialEndsAt;
+        Instant subscriptionEndsAt;
         try {
             Claims claims = jwtService.extractClaims(authHeader.substring(7));
             status = claims.get("tenantStatus", String.class);
             String trial = claims.get("trialEndsAt", String.class);
             trialEndsAt = (trial != null && !trial.isBlank()) ? Instant.parse(trial) : null;
+            String sub = claims.get("subscriptionEndsAt", String.class);
+            subscriptionEndsAt = (sub != null && !sub.isBlank()) ? Instant.parse(sub) : null;
         } catch (Exception ex) {
+            // Token inválido/ilegible: no es nuestro trabajo, que lo maneje seguridad.
             filterChain.doFilter(request, response);
             return;
         }
 
-        if (isAccessBlocked(status, trialEndsAt)) {
+        if (isAccessBlocked(status, trialEndsAt, subscriptionEndsAt)) {
             writeAccessBlockedResponse(request, response, status);
             return;
         }
@@ -84,16 +88,26 @@ public class TrialRestrictionFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private boolean isAccessBlocked(String status, Instant trialEndsAt) {
+    private boolean isAccessBlocked(String status, Instant trialEndsAt, Instant subscriptionEndsAt) {
         if (status == null) {
             return false;
         }
+        // SUSPENDED/CANCELLED/PAST_DUE => solo lectura
         if (status.equals("SUSPENDED") || status.equals("CANCELLED") || status.equals("PAST_DUE")) {
             return true;
         }
-        return status.equals("TRIAL")
+        // Trial vencido aunque el job aún no haya movido el estado
+        if (status.equals("TRIAL")
                 && trialEndsAt != null
-                && Instant.now().isAfter(trialEndsAt);
+                && Instant.now().isAfter(trialEndsAt)) {
+            return true;
+        }
+        // Suscripción de pago con el período cumplido: el estado sigue en ACTIVE hasta que el
+        // job nocturno lo pasa a PAST_DUE, y en esa ventana auth ya bloqueaba pero aquí no.
+        // Se compara contra el reloj, igual que el trial, para que caduque sola sin re-login.
+        return status.equals("ACTIVE")
+                && subscriptionEndsAt != null
+                && Instant.now().isAfter(subscriptionEndsAt);
     }
 
     private void writeAccessBlockedResponse(HttpServletRequest request, HttpServletResponse response,
