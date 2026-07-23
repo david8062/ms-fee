@@ -5,10 +5,13 @@ import com.IusCloud.msFees.core.features.fee.domain.model.PaymentEntity;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface PaymentJpaRepository extends BaseRepository<PaymentEntity, UUID> {
 
     List<PaymentEntity> findByFeeIdAndDeletedAtIsNull(UUID feeId);
+
+    Optional<PaymentEntity> findByIdAndFeeIdAndDeletedAtIsNull(UUID id, UUID feeId);
 }

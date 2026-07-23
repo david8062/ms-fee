@@ -23,8 +23,8 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     }
 
     @Override
-    public Optional<PaymentEntity> findById(UUID id) {
-        return jpaRepository.findById(id);
+    public Optional<PaymentEntity> findByIdAndFeeId(UUID id, UUID feeId) {
+        return jpaRepository.findByIdAndFeeIdAndDeletedAtIsNull(id, feeId);
     }
 
     @Override

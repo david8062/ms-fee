@@ -27,7 +27,7 @@ public class DeletePaymentUseCase implements DeletePaymentPort {
         feeRepository.findById(feeId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Fee", feeId));
 
-        PaymentEntity payment = paymentRepository.findById(paymentId)
+        PaymentEntity payment = paymentRepository.findByIdAndFeeId(paymentId, feeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Payment", paymentId));
 
         paymentRepository.delete(payment);

@@ -23,8 +23,8 @@ public class TimeEntryRepositoryImpl implements TimeEntryRepository {
     }
 
     @Override
-    public Optional<TimeEntryEntity> findById(UUID id) {
-        return jpaRepository.findById(id);
+    public Optional<TimeEntryEntity> findByIdAndFeeId(UUID id, UUID feeId) {
+        return jpaRepository.findByIdAndFeeIdAndDeletedAtIsNull(id, feeId);
     }
 
     @Override

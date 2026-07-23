@@ -24,7 +24,7 @@ public class DeleteTimeEntryUseCase implements DeleteTimeEntryPort {
         feeRepository.findById(feeId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Fee", feeId));
 
-        TimeEntryEntity entry = timeEntryRepository.findById(entryId)
+        TimeEntryEntity entry = timeEntryRepository.findByIdAndFeeId(entryId, feeId)
                 .orElseThrow(() -> new ResourceNotFoundException("TimeEntry", entryId));
 
         timeEntryRepository.delete(entry);

@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface TimeEntryRepository {
     TimeEntryEntity save(TimeEntryEntity entry);
-    Optional<TimeEntryEntity> findById(UUID id);
+    Optional<TimeEntryEntity> findByIdAndFeeId(UUID id, UUID feeId);
     List<TimeEntryEntity> findByFeeId(UUID feeId);
     void delete(TimeEntryEntity entry);
 }
