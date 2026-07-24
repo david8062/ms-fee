@@ -133,18 +133,6 @@
           }]
         },
         {
-          "name": "Crear honorario – HOURLY",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/api/v1/fees", "host": ["{{baseUrl}}"], "path": ["api","v1","fees"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"clientId\": \"{{clientId}}\",\n  \"assignedUserId\": \"{{userId}}\",\n  \"description\": \"Asesoría por horas\",\n  \"feeType\": \"HOURLY\",\n  \"agreedAmount\": 1200000,\n  \"currency\": \"COP\",\n  \"dueDate\": \"2026-09-30\"\n}"
-            }
-          }
-        },
-        {
           "name": "Crear honorario – CONTINGENCY",
           "request": {
             "method": "POST",
@@ -257,41 +245,6 @@
           "request": {
             "method": "DELETE",
             "url": { "raw": "{{baseUrl}}/api/v1/fees/{{feeId}}/payments/{{paymentId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","fees","{{feeId}}","payments","{{paymentId}}"] }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Time Entries",
-      "item": [
-        {
-          "name": "Registrar tiempo",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/api/v1/fees/{{feeId}}/time-entries", "host": ["{{baseUrl}}"], "path": ["api","v1","fees","{{feeId}}","time-entries"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"description\": \"Revisión de documentos y redacción de demanda\",\n  \"hours\": 3,\n  \"minutes\": 30,\n  \"workDate\": \"2026-06-12\"\n}"
-            }
-          },
-          "event": [{
-            "listen": "test",
-            "script": { "exec": ["var r = pm.response.json(); if(r.data && r.data.id) pm.collectionVariables.set('entryId', r.data.id);"], "type": "text/javascript" }
-          }]
-        },
-        {
-          "name": "Listar entradas de tiempo",
-          "request": {
-            "method": "GET",
-            "url": { "raw": "{{baseUrl}}/api/v1/fees/{{feeId}}/time-entries", "host": ["{{baseUrl}}"], "path": ["api","v1","fees","{{feeId}}","time-entries"] }
-          }
-        },
-        {
-          "name": "Eliminar entrada de tiempo",
-          "request": {
-            "method": "DELETE",
-            "url": { "raw": "{{baseUrl}}/api/v1/fees/{{feeId}}/time-entries/{{entryId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","fees","{{feeId}}","time-entries","{{entryId}}"] }
           }
         }
       ]

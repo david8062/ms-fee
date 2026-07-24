@@ -60,7 +60,4 @@ public class FeeEntity extends BaseModel {
 
     @OneToMany(mappedBy = "fee", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PaymentEntity> payments = new ArrayList<>();
-
-    @OneToMany(mappedBy = "fee", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TimeEntryEntity> timeEntries = new ArrayList<>();
 }

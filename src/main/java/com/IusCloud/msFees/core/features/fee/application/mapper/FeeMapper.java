@@ -4,10 +4,8 @@ import com.IusCloud.msFees.config.mapper.BaseEntityMapperConfig;
 import com.IusCloud.msFees.core.features.fee.application.dto.FeeRequestDTO;
 import com.IusCloud.msFees.core.features.fee.application.dto.FeeResponseDTO;
 import com.IusCloud.msFees.core.features.fee.application.dto.PaymentResponseDTO;
-import com.IusCloud.msFees.core.features.fee.application.dto.TimeEntryResponseDTO;
 import com.IusCloud.msFees.core.features.fee.domain.model.FeeEntity;
 import com.IusCloud.msFees.core.features.fee.domain.model.PaymentEntity;
-import com.IusCloud.msFees.core.features.fee.domain.model.TimeEntryEntity;
 import com.IusCloud.msFees.shared.enums.FeeStatusEnum;
 import org.mapstruct.*;
 
@@ -27,7 +25,6 @@ public interface FeeMapper {
             @Mapping(target = "tenantId",    source = "tenantId"),
             @Mapping(target = "status",      expression = "java(com.IusCloud.msFees.shared.enums.FeeStatusEnum.PENDING)"),
             @Mapping(target = "payments",    ignore = true),
-            @Mapping(target = "timeEntries", ignore = true),
             @Mapping(target = "currency",    expression = "java(dto.currency() != null ? dto.currency() : \"COP\")")
     })
     FeeEntity toEntity(FeeRequestDTO dto, UUID tenantId);
@@ -46,8 +43,7 @@ public interface FeeMapper {
             @Mapping(target = "isActive",    ignore = true),
             @Mapping(target = "tenantId",    ignore = true),
             @Mapping(target = "status",      ignore = true),
-            @Mapping(target = "payments",    ignore = true),
-            @Mapping(target = "timeEntries", ignore = true)
+            @Mapping(target = "payments",    ignore = true)
     })
     void updateEntityFromDto(FeeRequestDTO dto, @MappingTarget FeeEntity entity);
 
@@ -55,11 +51,6 @@ public interface FeeMapper {
     PaymentResponseDTO toPaymentResponse(PaymentEntity payment);
 
     List<PaymentResponseDTO> toPaymentResponses(List<PaymentEntity> payments);
-
-    @Mapping(target = "feeId", expression = "java(entry.getFee().getId())")
-    TimeEntryResponseDTO toTimeEntryResponse(TimeEntryEntity entry);
-
-    List<TimeEntryResponseDTO> toTimeEntryResponses(List<TimeEntryEntity> entries);
 
     default BigDecimal computeTotalPaid(FeeEntity entity) {
         if (entity.getPayments() == null) return BigDecimal.ZERO;

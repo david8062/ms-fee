@@ -26,7 +26,6 @@ public record FeeResponseDTO(
         FeeStatusEnum status,
         String notes,
         List<PaymentResponseDTO> payments,
-        List<TimeEntryResponseDTO> timeEntries,
         Boolean isActive,
         Instant createdAt,
         Instant updatedAt
